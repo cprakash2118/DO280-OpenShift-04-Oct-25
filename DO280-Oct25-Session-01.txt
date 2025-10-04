@@ -77,3 +77,107 @@ Table of Contents (TOC):-
  - Update Operators with the OLM 
  - OpenShift Updates
  
+
+###Point-3-)
+- Classroom Environment:-
+  1-) Users details:-
+    Login to VMs/Servers:-
+	 student/student  [Sudo access] 
+	 root/redhat 
+	
+	*********************** Below points belongs to only Oauth service - Start here ***************************
+	FYI- Ouath is an Identity Broker, which provides Authorization.
+	Eg:- It mean ssh login is authentication and sudo access is authorization.
+	
+	Login to OCP cluster:-
+	 admin/redhatocp  [cluster-admin account; It means same as root account w.r.t Linux]
+	 developer/developer [basic User]
+	 FYI- Both are LDAP user.
+	 
+	 kubeadmin/kubeadmin-password-file [On utility node, location=/home/lab/ocp4/auth/{kubeadmin-password,kubeconfig}
+	 $ ssh root@utility [from workstation as student account]
+	 # cd /home/lab/ocp4/auth/
+	 # cat kubeadmin-password ; echo 
+	 laksjdksaljdlaskjdlka
+	 
+	API URL - https://api.clusterName.baseDomain:6443 
+    Web COnsole - https://appName-nsName.apps.clusterName.baseDomain
+   
+	As per our LAB env:- 
+	   clusterName=ocp4 
+	   baseDomain=example.com 
+	   appName=console 
+	   nsName=openshift-console 
+	
+	API URL - https://api.ocp4.example.com:6443 
+	Web COnsole - https://console-openshift-console.apps.ocp4.example.com 
+	
+	
+	API URL used by CLI login to OCP cluster via oc (openshift-client).
+	Eg: $ oc login -u admin -p redhatocp https://api.ocp4.example.com:6443 
+	    $ oc whoami 
+		$ oc whoami -t 
+		$ oc version 
+		$ oc get nodes 
+		$ oc get clusterversion 
+			
+	Web Console Login:-
+	Web Browser -> https://console-openshift-console.apps.ocp4.example.com 
+	Use "admin" as user and "redhatocp" as password.
+  *********************** Above points belongs to only Oauth service - End here ***************************	
+	
+  Client Certificate authentication:-
+  kubeconfig file 
+  FYI- API URL, you can get from below command also:-
+   # cat kubeconfig | grep server 
+     https://api.ocp4.example.com:6443 
+
+   $ ssh root@utility [from workstation as student account]
+   # cd /home/lab/ocp4/auth/
+   # ls 
+   kubeadmin-password kubeconfig
+   # scp kube* student@workstation:~/
+   Student's password: student 
+   # exit 
+   $ ls 
+   kubeadmin-password kubeconfig
+
+   $ hostname -f ; pwd
+   workstation.lab.example.com 
+   /home/student 
+  
+ 1- $ oc whoami --kubeconfig kubeconfig-file-location
+    $ oc whoami --kubeconfig /home/student/kubeconfig
+
+ 2- 	
+   $ env | grep KUBECONFIG 
+   $ export KUBECONFIG=/home/student/kubeconfig
+   $ env | grep KUBECONFIG
+   KUBECONFIG=/home/student/kubeconfig  
+   $ oc get nodes
+
+ 3- $ cp -rpv ~/kubeconfig ~/.kube/config 
+    $ oc get nodes 
+	
+FYI- reset all - $ mv ~/.kube /tmp 
+                 or 
+				 $ rm -rf ~/.kube 
+
+----------------
+
+ 2-) Network & Domain details:-
+   
+  Network Name                  Domain Name                       Network Range (CIDR)
+  classroom Network            example.com                      172.25.252.0/24 
+  student Network              lab.example.com                  172.25.250.0/24   (Eg: Accenture Network - gateway)
+  Cluster Network              ocp4.example.com                 192.168.50.0/24   (Eg: ClientNetwork - citi.com)
+  
+ 3-) VMs/Servers details:-
+   workstation.lab.example.com      [Jump server, used for login to OCP cluster - RHEL GUI based server]
+   bastion.lab.example.com          [Connect student network to classroom network]
+   classroom.example.com            [Provide internet access - quay.io/registry.redhat.io etc]
+   utility.lab.example.com          [Connect student network to OCP cluster network and provide below services]
+                                    FYI- DNS,HAproxy,DHCP,PXE-KickStart,NFS-server,Apache, etc.
+   master01.ocp4.example.com        [OCP master/worker nodes]
+   registry.ocp4.example.com        [Used for git/registry etc]
+   idm.ocp4.example.com             [LDAP server]
