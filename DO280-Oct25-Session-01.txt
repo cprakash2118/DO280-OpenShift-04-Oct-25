@@ -1,0 +1,79 @@
+https://github.com/cprakash2118/DO280-OpenShift-04-Oct-25
+
+Multicloud Container Development Platforms:-
+https://reprints2.forrester.com/#/assets/2/431/RES178526/report
+https://reprint.forrester.com/reports/the-forrester-wavetm-multicloud-container-platforms-q3-2025-f3367e46/index.html
+
+
+###Point-1-)
+- Product Name - "Red Hat OpenShift" 
+  1-) Cloud services editions
+   - Red Hat OpenShift Service on AWS        [PlatformsUsed=AWS Cloud;POC=Amazon] - ROSA
+   - Microsoft Azure Red Hat OpenShift       [PlatformsUsed=Azure Cloud;POC=Microsoft Azure] - ARO
+   - Red Hat OpenShift Dedicated             [PlatformsUsed=AWS/GCP cloud;POC=RedHat]
+   - Red Hat OpenShift on IBM Cloud          [PlatformsUsed=IBM Cloud;POC=IBM]
+  
+  2-) Self-managed editions
+   - Red Hat OpenShift Kubernetes Engine     [Basic;RHOKE]
+   - Red Hat OpenShift Container Platform    [Standard;RHOCP]
+   - Red Hat OpenShift Platform Plus         [Add-on Service ; RHOPP]
+   - Red Hat OpenShift Virtualization Engine [Add-On;RHOV] - KubeVirt Based.
+   
+  3-) Services & add-ons
+   - Red Hat OpenShift AI                                [AI/ML workload]
+   - Red Hat OpenShift Lightspeed                        
+   - Red Hat OpenShift Virtualization                    [RHOV-KubeVirt]
+   - Red Hat Quay                                        [Registry]
+   - Red Hat Advanced Cluster Management for Kubernetes  [RHACM]
+   - Red Hat Advanced Cluster Security for Kubernetes    [RHACS]
+   - Red Hat Advanced Developer Suite
+   - Red Hat OpenShift Consulting
+
+https://www.redhat.com/en/resources/openshift-skill-paths-datasheet
+
+###Point-2-)
+Table of Contents (TOC):-
+1. Declarative Resource Management  
+  - Resource Manifest 
+  - Kustomization & Overlay 
+
+2. Deploy Packaged Applications 
+  - Via Red Hat OpenShift Templates 
+  - Helm Chart
+
+3. Authentication and Authorization
+  - Authentication via Oauth/Client-Certificate, Identity Provider (IdP-htpasswd)
+    FYI-Identity Provider - HTpasswd,LDAP,OpenIDConnect (OIDC) etc 
+  - Authorization via Role Based Access Control (RBAC).
+
+4. Network Security  
+  - Basic networking (CNI - Container Network Interface)
+  - Protect External Traffic with TLS 
+  - Configure Network Policies 
+  - Protect Internal Traffic with TLS 
+
+5. Expose non-HTTP/SNI Applications 
+  - Load Balancer Services 
+  - Multus Secondary Networks (Another CNI; Default CNI-OVNKubernetes).
+
+6. Enable Developer Self-Service  
+  - LimitRange 
+  - ResourceQuota 
+  - Custom Template 
+
+7. Manage Kubernetes Operators 
+  - Operators 
+  - Web Console to install Operators
+  - CLI to install Operators
+  
+8. Application Security
+ - Control Application Permissions with Security Context Constraints 
+ - Allow Application Access to Kubernetes APIs 
+ - Cluster and Node Maintenance with Kubernetes Cron Jobs 
+
+9.  OpenShift Updates
+ - The Cluster Update Process 
+ - Detect Deprecated Kubernetes API Usage 
+ - Update Operators with the OLM 
+ - OpenShift Updates
+ 
