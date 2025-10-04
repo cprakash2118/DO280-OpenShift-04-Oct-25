@@ -181,3 +181,94 @@ FYI- reset all - $ mv ~/.kube /tmp
    master01.ocp4.example.com        [OCP master/worker nodes]
    registry.ocp4.example.com        [Used for git/registry etc]
    idm.ocp4.example.com             [LDAP server]
+   
+
+###Point-4-)
+  Kubernetes Vs OpenShift:-
+  
+Kubernetes:- 
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+https://kubernetes.io/docs/setup/production-environment/container-runtimes/
+
+Layer-06   End user applications(Banking/Telco etc)
+Layer-05   Add on kubernetes services (Network;Storage;Minoting;logging etc)
+Layer-04   Install Certified Kubernetes (version 1.31)
+           kubelet;kube-apiserver;etcd;kube-controller-manager;kube-scheduler
+		   systemd service - kubelet 
+Layer-03   Install "Container RunTime" - Crio,Containerd, Docker, Mirantis COntainer RunTime
+            systemd service - crio 
+Layer-02   Installed Operating System (RHEL9).
+layer-01   hardware;Virtualization;Cloud [Infra]
+
+
+Red Hat OpenShift:-
+--------------------------------------------------------------------------
+Note: End user application can be deployed on RHOKE/RHOCP/RHOPP 
+
+Layer-08   End user applications(Banking/Telco etc)
+Layer-07   Rd Hat openshift Platform Plus (RHOPP - Add-On service).
+Layer-06   Red Hat openshift Container Platform (RHOCP)
+Layer-05   Red Hat openshift Kubernetes Engine (RHOKE)
+Layer-04   Install Certified Kubernetes (version 1.31) - by openshift-installer 
+           kubelet;kube-apiserver;etcd;kube-controller-manager;kube-scheduler
+		   
+		   OCP version 4.14 - k8s version 1.27 
+		   OCP version 4.15 - k8s version 1.28 
+		   .. 
+		   OCP version 4.18 - k8s version 1.31 
+
+Layer-03   Container RunTime (default=crio) - systemd service (running on all master/worker) - by openshift-installer
+Layer-02   Installed Operating System - RHEL core OS (Not manually installed; installed by openshift-installer".
+           openshift-installer with the help of ignition files [bootstrap.ign,master.ign,worker.ign]
+layer-01   hardware;Virtualization;Cloud [Infra]  
+
+
+*************************************************
+- Login to OCP cluster:-
+  Oauth via CLI  
+  $ oc login -u admin -p redhatocp https://api.ocp4.example.com:6443 
+  Oauth via Web Console
+  admin/redhatocp -> https://console-openshift-console.apps.ocp4.example.com 
+  
+  Clinet-Certificate 
+  Using "kubeconfig file" - methods 1,2,3 
+  
+Task Example:-
+Create users access 
+-user1 to user5 with password "redhat123"
+
+Outcome must be like this.
+$ oc login -u user1 -p redhat123 https://api.ocp4.example.com:6443  
+Same should work for user1-5.
+
+Step-1:-
+$ htpasswd --help 
+$ htpasswd -c -B -b htpasswd-file-name user1 redhat123 
+$ htpasswd -B -b htpasswd-file-name user2 redhat123 
+$ htpasswd -B -b htpasswd-file-name user3 redhat123
+$ htpasswd -B -b htpasswd-file-name user4 redhat123
+$ htpasswd -B -b htpasswd-file-name user5 redhat123
+
+
+Step-2:- Create secret and inject this file inside the OCP cluster.
+$ oc create secret generic secret-htpasswd --from-file htpasswd=htpasswd-file-name -n openshift-config 
+or
+$ oc create secret generic secret-htpasswd --from-file htpasswd=htpasswd-file-name -n openshift-config --dry-run=client -o yaml > mysecret.yaml 
+$ oc create -f mysecret.yaml --save-config 
+
+$ oc get secret secret-htpasswd  -n openshift-config
+$ oc get secret secret-htpasswd  -n openshift-config -o yaml/json 
+
+
+Step-3:-
+$ oc get oauth cluster -o yaml > oauth.yaml
+Note: - Making changes.
+$ oc apply -f oauth.yaml
+$ oc get pods -n openshift-authentication 
+$ oc login -u user1 -p redhat123 https://api.ocp4.example.com:6443 
+
+
+
+
+
+
