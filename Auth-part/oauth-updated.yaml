@@ -1,0 +1,45 @@
+apiVersion: config.openshift.io/v1
+kind: OAuth
+metadata:
+  annotations:
+    include.release.openshift.io/ibm-cloud-managed: "true"
+    include.release.openshift.io/self-managed-high-availability: "true"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"config.openshift.io/v1","kind":"OAuth","metadata":{"annotations":{"include.release.openshift.io/ibm-cloud-managed":"true","include.release.openshift.io/self-managed-high-availability":"true","release.openshift.io/create-only":"true"},"creationTimestamp":"2025-04-10T13:17:24Z","generation":3,"name":"cluster","ownerReferences":[{"apiVersion":"config.openshift.io/v1","kind":"ClusterVersion","name":"version","uid":"6ce2ccfd-ed21-458d-bde6-7e41a7a0cd6d"}],"resourceVersion":"2531430","uid":"348aca34-9334-4088-9494-9d556c654d43"},"spec":{"identityProviders":[{"htpasswd":{"fileData":{"name":"htpasswd-secret"}},"mappingMethod":"claim","name":"htpasswd_provider","type":"HTPasswd"},{"htpasswd":{"fileData":{"name":"secret-htpasswd-sre"}},"mappingMethod":"claim","name":"IdP-htpasswd-SRE-Team","type":"HTPasswd"},{"htpasswd":{"fileData":{"name":"secret-htpasswd-devops"}},"mappingMethod":"claim","name":"IdP-htpasswd-DevOps-Team","type":"HTPasswd"},{"htpasswd":{"fileData":{"name":"secret-htpasswd-myapp"}},"mappingMethod":"claim","name":"IdP-htpasswd-myapp-Team","type":"HTPasswd"}]}}
+    release.openshift.io/create-only: "true"
+  creationTimestamp: "2025-04-10T13:17:24Z"
+  generation: 4
+  name: cluster
+  ownerReferences:
+  - apiVersion: config.openshift.io/v1
+    kind: ClusterVersion
+    name: version
+    uid: 6ce2ccfd-ed21-458d-bde6-7e41a7a0cd6d
+  resourceVersion: "3809012"
+  uid: 348aca34-9334-4088-9494-9d556c654d43
+spec:
+  identityProviders:
+  - htpasswd:
+      fileData:
+        name: htpasswd-secret
+    mappingMethod: claim
+    name: htpasswd_provider
+    type: HTPasswd
+  - htpasswd:
+      fileData:
+        name: secret-htpasswd-sre
+    mappingMethod: add
+    name: IdP-htpasswd-SRE-Team
+    type: HTPasswd
+  - htpasswd:
+      fileData:
+        name: secret-htpasswd-devops
+    mappingMethod: claim
+    name: IdP-htpasswd-DevOps-Team
+    type: HTPasswd
+  - htpasswd:
+      fileData:
+        name: secret-htpasswd-myapp
+    mappingMethod: claim
+    name: IdP-htpasswd-myapp-Team
+    type: HTPasswd
