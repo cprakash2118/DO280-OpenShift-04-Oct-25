@@ -49,3 +49,127 @@ Quick Recap (5-10 mins):-
 	$ cp -rpv ~/kubeconfig ~/.kube/config
 	$ oc whoami 
 	$ oc get nodes
+---------------------------------------------------------------------------------------------
+1-) Authentication via IdP (Identity Provider)
+ - htpasswd [Same as local user/group management]
+ - LDAP [LDAP sync]
+ - AD (Active Directory)
+ - OpenIDConnect (OIDC) - Example:- RH-SSO, PingIdentity etc 
+ - Keystone 
+ - etc 
+ 
+ As per Our LAB - DO280 
+ - htpasswd 
+ - LDAP login [We will discuss few points] - idm.ocp4.example.com admin/redhatocp [admin & developer are LDAP accounts]
+
+2-) Users/Groups - Local & regular accounts.  
+   identity (user's identity - Which IdP used when user authenticated).
+   serviceaccount (sa) - Used by application/API
+   
+3-) OCP cluster ?
+  - master nodes - k8s/ocp services running, also called as control plane 
+  - worker nodes - End user application running/ Infra services, also called as compute node.
+  - 3 masters - 2500 worker nodes (RHOCPv4.10)
+  - OCP Cluster eg:-
+    5 node cluster [3 master, 2 worker nodes]
+	N node cluster [3 master, N worker nodes ]
+  - Once OCP cluster deployed/installed - kubeadmin (default account with cluster-admin access)
+    $ oc get secret kubeconfig -n kube-system [Tmp account].
+
+
+**** Authentication part w.r.t Oauth (Using htpasswd):-
+- oc login -u userName -p password API-URL
+$ oc login -u admin -p redhatocp https://api.ocp4.example.com:6443 
+Request -> api.ocp4.example.com:6443 (Its Haproxy based LB=utility node) -> kube APIserver (master01-03:6443)
+
+Step-1st:-
+Oauth Service - namespace="openshift-authentication"
+$ oc get pods -n openshift-authentication 
+Oauth service running on all the master nodes.
+
+Step-2nd:-
+OpenShift apiserver service - namespace="openshift-apiserver" - Proxy server
+$ oc get pods -n openshift-apiserver
+Note: Oauth service is an identity broker and inbuild service w.r.t Red Hat OpenShift.
+
+Step-3rd:-
+Kube APIserver service - namespace="openshift-kube-apiserver"
+$ oc get pods -n openshift-kube-apiserver [Static POD - started by kubelet]
+
+Step-4th:-
+Kube Controller-manager 
+kube Scheduler
+ETCD 
+ 
+-----------------------------------------------------------------------------------------------
+Task-01:- Idp=htpasswd 
+user1-5/redhat123;  file-upload-htpasswd-file-sre;  secretName=secret-htpasswd-sre;  IdP-Name=IdP-htpasswd-SRE-Team 
+user6-10/redhat123; file-upload-htpasswd-file-devops; secretName=secret-htpasswd-devops;  IdP-Name=IdP-htpasswd-DevOps-Team
+user11-20/redhat123; file-upload-htpasswd-myapp;  secretName=secret-htpasswd-myapp;  IdP-Name=IdP-htpasswd-myapp-Team
+
+
+Task-02:-
+Adding user51-52/redhat123 to SRE team 
+Deleting user5 from SRE team 
+
+Adding user61-62/redhat123 to Devops team 
+Deleting user10 from SRE team
+
+admin/red (This account to SRE raem)
+FYI= admin is already LDAP user and already accessed the OCP cluster as cluster-admin.
+$ oc login -u admin -p redhat123 https://api.pocp4.example.com:6443 
+$ oc login -u admin -p red https://api.pocp4.example.com:6443 
+
+Question:- It allow this change or not?
+
+
+---
+Lab Solution:-
+
+Step-01:- Create user databases (which OCP used for login to OCP cluster).
+$ htpasswd -c -B -b file-upload-htpasswd-file-sre user1 redhat123 
+$ htpasswd    -B -b file-upload-htpasswd-file-sre user2 redhat123
+$ htpasswd    -B -b file-upload-htpasswd-file-sre user3 redhat123
+$ htpasswd    -B -b file-upload-htpasswd-file-sre user4 redhat123
+$ htpasswd    -B -b file-upload-htpasswd-file-sre user5 redhat123
+$ cat file-upload-htpasswd-file-sre [This is user database]
+
+Step-02:- Login to cluster as clutser-admin and create secret (generic. with option --from-file]
+$ oc create secret generic secret-htpasswd-sre --from-file htpasswd=file-upload-htpasswd-file-sre -n openshift-config 
+$ oc get secret secret-htpasswd-sre -n openshift-config 
+$ oc get secret secret-htpasswd-sre -n openshift-config -o yaml > mysecret-updated.yaml 
+
+Step-03:- Update to Oauth service regarding new secret. 
+$ oc get oauth cluster 
+$ oc get oauth cluster -o yaml > oauth.yaml 
+
+Note: DO the required changes w.r.t oauth.yaml file.
+https://docs.redhat.com/en/documentation/openshift_container_platform/4.14/html/authentication_and_authorization/index
+https://docs.redhat.com/en/documentation/openshift_container_platform/4.14/html-single/authentication_and_authorization/index
+ 
+ 
+Spec:
+_________________________________________________
+  identityProviders:
+  - name: IdP-htpasswd-SRE-Team
+    mappingMethod: claim 
+    type: HTPasswd
+    htpasswd:
+      fileData:
+        name: secret-htpasswd-sre
+______________________________________________________
+
+
+$ oc apply -f oauth.yaml 
+$ oc get pods -n openshift-authentication
+
+Now authenticate all users to OCP cluster uinsg Oauth token based authentication.
+UserName + Password 
+or
+Token  
+
+  
+  
+  
+  
+  
