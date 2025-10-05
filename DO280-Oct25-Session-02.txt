@@ -1,0 +1,51 @@
+#https://github.com/cprakash2118/DO280-OpenShift-04-Oct-25
+
+Quick Recap (5-10 mins):-
+- Product - Red Hat OpenShift [Cloud/Self Editions]
+- Classroom Environment:-
+  Users Details:-
+  - Login to VMs - student/student; root/redhat 
+  - Login to OCP cluster - admin/redhatocp (cluster-admin account) ; developer/developer (basic user)
+  - Login to OCP cluster via kubeadmin [on utility,localtion=/home/lab/ocp4/auth/{kubeadmin-password,kubeconfig]
+  - Logical Understanding for 
+    API URL= https://api.clusterName.baseDomain:6443 
+    Web Console= https://appName-nsName.apps.clusterName.baseDomain
+
+  - Example to login to OCP cluster:-
+    $ oc login -u user -p redhat API-URL 
+    As per our lab (DO280 - Any ROL labs - https://rol.redhat.com).
+    $ oc login -u admin -p redhatocp https://api.ocp4.example.com:6443 
+
+	clusterName= ocp4 
+	baseDomain= example.com 
+	port= 6443 
+	appName=console 
+	nsName=openshift-console
+
+- Authentication via:-
+  1-Oauth (Token based auth)
+    CLI auth - $ oc login -u admin -p redhatocp https://api.ocp4.example.com:6443 
+	Web Console - Open Browser - https://console-openshift-console.apps.ocp4.example.com 
+	
+  2-Client-Certificate (Certificate based auth)
+    Required "kubeconfig" file - [on utility,localtion=/home/lab/ocp4/auth/kubeconfig]
+	Copy kubeconfig file to workstation [ scp /home/lab/ocp4/auth/kube* student@workstation:~/]
+	Use kubeconfig file:-
+	$ oc whoami --kubeconfig /location/of/kubeconfig/file 
+	Eg:
+    1st Method-
+	$ oc whoami --kubeconfig /home/student/kubeconfig 
+	
+	2nd Method-
+	$ env | grep KUBECONFIG 
+	$ export KUBECONFIG=/home/student/kubeconfig
+	$ env | grep KUBECONFIG
+	KUBECONFIG=/home/student/kubeconfig
+	$ oc whoami 
+	$ oc get nodes 
+	FYI- unset KUBECONFIG (remove kubeconfig file auth)
+	
+	3rd Method:-
+	$ cp -rpv ~/kubeconfig ~/.kube/config
+	$ oc whoami 
+	$ oc get nodes
